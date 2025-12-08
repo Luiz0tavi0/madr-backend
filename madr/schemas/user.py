@@ -19,6 +19,8 @@ class UserPublic(UserBase):
 class UserDB(UserSchema):
     id: int
 
+    model_config = {'from_attributes': True}
+
 
 class UserList(BaseModel):
     users: List[UserPublic]

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from madr.api.router import routers
+from madr.api.v1.router import routers
 
 app = FastAPI()
 

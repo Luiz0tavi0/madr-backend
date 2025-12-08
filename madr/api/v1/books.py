@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter
 
-from madr.schemas.users import UserDB, UserList, UserPublic, UserSchema
+from madr.schemas.user import UserDB, UserList, UserPublic, UserSchema
 
 router = APIRouter(prefix='/users', tags=['users'])
 

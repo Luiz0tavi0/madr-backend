@@ -6,8 +6,11 @@ authors = [{ name = "luiz_loon", email = "luiz_loon@yahoo.com.br" }]
 readme = "README.md"
 requires-python = ">=3.13.3,<4.0.0"
 dependencies = [
+    "alembic>=1.17.2",
     "fastapi[standard]",
+    "pwdlib[argon2]>=0.3.0",
     "pydantic-settings>=2.12.0",
+    "pyjwt>=2.10.1",
     "sqlalchemy>=2.0.44",
 ]
 
@@ -17,6 +20,8 @@ dev-dependencies = [
     "pytest-cov",
     "taskipy",
     "ruff",
+    "alembic>=1.17.2",
+    "ipdb",
 ]
 
 [build-system]

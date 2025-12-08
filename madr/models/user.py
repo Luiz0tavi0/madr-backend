@@ -1,20 +1,13 @@
-import datetime
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_as_dataclass, mapped_column, registry
+from sqlalchemy.orm import Mapped, mapped_as_dataclass, mapped_column
 
-table_registry = registry()
+from madr.models import table_registry
+from madr.models.mixins import DateMixin
 
 
 @mapped_as_dataclass(table_registry)
-class User:
+class User(DateMixin):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     username: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True)
-    created_at: Mapped[datetime.datetime] = mapped_column(
-        init=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime.datetime] = mapped_column(
-        init=False, server_default=func.now()
-    )
