@@ -61,7 +61,7 @@ def user(session: Session):
 
 
 @pytest.fixture
-def authenticated_token(user: User):
+def authenticated_header(user: User):
     token_delta_expire_time = timedelta(minutes=5)
 
     data = {'sub': user.id, 'username': user.username, 'email': user.email}

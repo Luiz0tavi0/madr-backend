@@ -3,6 +3,7 @@ from http import HTTPStatus
 import ipdb  # noqa: F401
 from fastapi.testclient import TestClient
 
+from madr.core.security import Token
 from madr.models.user import User
 from madr.schemas.user import UserDB
 
@@ -23,12 +24,12 @@ def test_users_deve_retornar_usuario_criado_com_id(client: TestClient):
 
 
 def test_update_user_deve_retornar_success_delecao(
-    client: TestClient, authenticated_token: str
+    client: TestClient, authenticated_header: Token
 ):
     response = client.delete(
         '/users/',
         headers={
-            'Authorization': f'Bearer {authenticated_token.access_token}'
+            'Authorization': f'Bearer {authenticated_header.access_token}'
         },
     )
 

@@ -1,4 +1,4 @@
-# Sistema de Gerenciamento de Romancistas — Backend (FastAPI)
+# Sistema de Gerenciamento de Romancistas — Backend
 
 Este backend gerencia **romancistas**, **livros**, **usuários** e **autenticação JWT**.  
 A equipe de frontend pode usar essa API para desenvolver dashboards, sites e apps logados.
@@ -46,7 +46,7 @@ uv run alembic upgrade head
 
 ### 7. Rode a API
 ```bash
-uv run fastapi dev madr/main.py
+uv run task run
 ```
 
 A API ficará disponível em:  
@@ -61,13 +61,13 @@ Documentação automática:
 ## 🧪 Rodando testes
 
 ```bash
-uv run pytest -q
+uv run task test
 ```
 
-Com cobertura:
+Com relatório de cobertura:
 
 ```bash
-uv run pytest --cov=madr
+uv run task test --cov=madr  
 ```
 
 ---
@@ -75,14 +75,34 @@ uv run pytest --cov=madr
 ## 📦 Estrutura do projeto (simplificada)
 
 ```
-madr/
- ├── api/
- │    └── v1/
- ├── core/
- ├── models/
- ├── schemas/
- ├── main.py
- └── ...
+.
+├── README.md
+├── alembic.ini
+├── compose.yml
+├── database.db
+├── madr
+│   ├── __init__.py
+│   ├── api
+│   ├── app.py
+│   ├── config.py
+│   ├── core
+│   ├── dependecies.py
+│   ├── main.py
+│   ├── models
+│   └── schemas
+├── migrations
+│   ├── README
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+├── pyproject.toml
+├── tests
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── database
+│   ├── test_app.py
+│   └── test_user.py
+└── uv.lock
 ```
 
 ---
@@ -202,14 +222,34 @@ uv run task test --cov=madr
 ## 📦 Estrutura do projeto (simplificada)
 
 ```
-madr/
- ├── api/
- │    └── v1/
- ├── core/
- ├── models/
- ├── schemas/
- ├── main.py
- └── ...
+.
+├── README.md
+├── alembic.ini
+├── compose.yml
+├── database.db
+├── madr
+│   ├── __init__.py
+│   ├── api
+│   ├── app.py
+│   ├── config.py
+│   ├── core
+│   ├── dependecies.py
+│   ├── main.py
+│   ├── models
+│   └── schemas
+├── migrations
+│   ├── README
+│   ├── env.py
+│   ├── script.py.mako
+│   └── versions
+├── pyproject.toml
+├── tests
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── database
+│   ├── test_app.py
+│   └── test_user.py
+└── uv.lock
 ```
 
 ---

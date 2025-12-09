@@ -56,5 +56,6 @@ local/
 
 # FastAPI specific
 .env # Environment variables (often sensitive)
+*.env
 *.log # Log files
 /data/ # Example directory for data files (if applicable)
