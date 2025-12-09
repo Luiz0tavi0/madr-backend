@@ -11,6 +11,7 @@ from sqlalchemy.pool import StaticPool
 from madr.app import app
 from madr.core.security import Token, generate_token
 from madr.models import table_registry
+from madr.models.novelist import Novelist
 from madr.models.user import User
 
 pwd = PasswordHash.recommended()
@@ -58,6 +59,16 @@ def user(session: Session):
     session.commit()
     session.refresh(new_user)
     return new_user
+
+
+@pytest.fixture
+def novelist(session: Session):
+    new_novelist = Novelist(name='Hercule Poiroht')
+
+    session.add(new_novelist)
+    session.commit()
+    session.refresh(new_novelist)
+    return new_novelist
 
 
 @pytest.fixture

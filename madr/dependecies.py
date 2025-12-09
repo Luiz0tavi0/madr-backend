@@ -6,6 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.orm import Session
 
 from madr.core.database import get_session
+from madr.core.security import get_current_user
+from madr.schemas.user import UserPublic
 
 
 class Settings(BaseSettings):
@@ -22,3 +24,5 @@ class Settings(BaseSettings):
 request_form_data = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 db_session = Annotated[Session, Depends(get_session)]
+
+active_user = Annotated[UserPublic, Depends(get_current_user)]

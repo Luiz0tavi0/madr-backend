@@ -1,8 +1,6 @@
 from datetime import timedelta
 from http import HTTPStatus
-from typing import Annotated
 
-import ipdb
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
@@ -12,12 +10,11 @@ from madr.core.security import (
     Token,
     authenticate_user,
     generate_token,
-    get_current_user,
 )
-from madr.dependecies import db_session, request_form_data
+from madr.dependecies import active_user, db_session, request_form_data
 from madr.models.user import User
 from madr.schemas import Message
-from madr.schemas.user import UserPublic, UserSchema
+from madr.schemas.user import UserCreate, UserPublic, UserUpdate
 
 router = APIRouter(prefix='/users', tags=['users'])
 
@@ -44,7 +41,7 @@ def login(form_data: request_form_data, session: db_session) -> Token:
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema, session: Session = Depends(get_session)):
+def create_user(user: UserCreate, session: Session = Depends(get_session)):
     stmt = select(User)
     stmt.where((User.username == user.username) | (User.email == user.email))
     existing_user = session.scalar(stmt)
@@ -59,13 +56,14 @@ def create_user(user: UserSchema, session: Session = Depends(get_session)):
     return db_user
 
 
-@router.put(
-    '/{user_id}', status_code=HTTPStatus.CREATED, response_model=UserPublic
-)
+@router.put('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def udpate_user(
-    user_id: int, user: UserSchema, session: Session = Depends(get_session)
+    active_user: active_user, user: UserUpdate, session: db_session
 ):
-    existing_user = session.scalar(select(User).where(User.id == user_id))
+
+    existing_user = session.scalar(
+        select(User).where(User.id == active_user.id)
+    )
     if not existing_user:
         raise HTTPException(HTTPStatus.NOT_FOUND, detail='User Not Found')
     items = user.model_dump(
@@ -93,14 +91,12 @@ def udpate_user(
 
 @router.delete('/', status_code=HTTPStatus.OK, response_model=Message)
 def remove_user(
-    current_user: Annotated[UserPublic, Depends(get_current_user)],
+    active_user: active_user,
     session: Session = Depends(get_session),
 ):
     try:
-        # ipdb.set_trace()
-        session.execute(delete(User).where(User.id == current_user.id))
+        session.execute(delete(User).where(User.id == active_user.id))
         session.commit()
     except Exception:
-        ipdb.set_trace()
         raise HTTPException(HTTPStatus.NOT_FOUND, 'User Not Found')
     return {'message': 'Account Removed'}

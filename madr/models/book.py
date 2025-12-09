@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 
 from madr.models import table_registry
 from madr.models.mixins import DateMixin
-from madr.models.novelists import Novelist
+from madr.models.novelist import *  # noqa: F403
 
 
 @mapped_as_dataclass(table_registry)
@@ -18,5 +18,5 @@ class Book(DateMixin):
     name: Mapped[str] = mapped_column(unique=True)
     year: Mapped[str] = mapped_column()
     title: Mapped[str] = mapped_column()
-    id_novelist: Mapped[str] = mapped_column(ForeignKey('novelists.id'))
-    novelist: Mapped[Novelist] = relationship(back_populates='books')
+    id_novelist: Mapped[int] = mapped_column(ForeignKey('novelists.id'))
+    novelist: Mapped['Novelist'] = relationship(back_populates='books')  # noqa: F405

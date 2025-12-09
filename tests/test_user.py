@@ -5,7 +5,6 @@ from fastapi.testclient import TestClient
 
 from madr.core.security import Token
 from madr.models.user import User
-from madr.schemas.user import UserDB
 
 
 def test_users_deve_retornar_usuario_criado_com_id(client: TestClient):
@@ -52,21 +51,25 @@ def test_update_user_deve_retornar_success_delecao(
 
 
 def test_update_user_deve_retornar_user_modificado(
-    client: TestClient, user: User
+    client: TestClient, user: User, authenticated_header: Token
 ):
-
-    identifier = user.id
     username = user.username
     modified_username = f'modified_{username}'
 
-    user_schema = UserDB.model_validate(user)
     payload = {
-        **user_schema.model_dump(),
         'username': modified_username,
     }
 
-    response = client.put(f'/users/{identifier}', json=payload)
+    response = client.put(
+        '/users/',
+        json=payload,
+        headers={
+            'Authorization': f'Bearer {authenticated_header.access_token}'
+        },
+    )
+
     data = response.json()
+
     assert data['username'] == modified_username
 
 

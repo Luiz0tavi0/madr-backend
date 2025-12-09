@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta, timezone
+from http import HTTPStatus
 from typing import Annotated, Optional
 
 import jwt
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
 from pydantic import BaseModel
@@ -28,14 +29,23 @@ def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: Annotated[Session, Depends(get_session)],
 ):  # noqa: F821
-    payload = jwt.decode(
-        token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+    credentials_exception = HTTPException(
+        status_code=HTTPStatus.UNAUTHORIZED,
+        detail='Could not validate credentials',
+        headers={'WWW-Authenticate': 'Bearer'},
     )
-    payload['sub'] = int(payload['sub'])
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        payload['sub'] = int(payload['sub'])
+        int_identifier = payload.get('sub')
+    except jwt.InvalidTokenError:
+        raise credentials_exception
 
-    # ipdb.set_trace()
-    int_identifier = payload.get('sub')
     user = session.scalar(select(User).where(User.id == int_identifier))
+    if user is None:
+        raise credentials_exception
     return user
 
 

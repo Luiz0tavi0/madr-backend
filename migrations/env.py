@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 from madr.config import Settings
-from madr.models import table_registry
-from madr.models import user, books, novelists
+from madr.models import book, novelist, table_registry
+from madr.models import user
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 

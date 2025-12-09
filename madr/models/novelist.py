@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
 )
 
 from madr.models import table_registry
-from madr.models.books import Book
+from madr.models.book import Book
 from madr.models.mixins import DateMixin
 
 
@@ -17,4 +17,7 @@ class Novelist(DateMixin):
     __tablename__ = 'novelists'
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
-    books: Mapped[List[Book]] = relationship(back_populates='novelist')
+    books: Mapped[List[Book]] = relationship(
+        init=False, cascade='all, delete-orphan',
+        lazy='selectin',
+        back_populates='novelist')
