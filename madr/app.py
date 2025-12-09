@@ -4,10 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from madr.api.v1.router import routers
 
 app = FastAPI()
-origins = [
-    'http://localhost',
-    'http://localhost:8080',
-]
+origins = ['http://localhost:3000', 'http://127.0.0.1:3000']
+
+
+[app.include_router(router) for router in routers]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -15,5 +15,3 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*'],
 )
-
-[app.include_router(router) for router in routers]
