@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import (
     Mapped,
@@ -8,15 +12,20 @@ from sqlalchemy.orm import (
 
 from madr.models import table_registry
 from madr.models.mixins import DateMixin
-from madr.models.novelist import *  # noqa: F403
+
+if TYPE_CHECKING:
+    from madr.models.novelist import Novelist
 
 
 @mapped_as_dataclass(table_registry)
 class Book(DateMixin):
     __tablename__ = 'books'
+
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
     year: Mapped[str] = mapped_column()
     title: Mapped[str] = mapped_column()
+
     id_novelist: Mapped[int] = mapped_column(ForeignKey('novelists.id'))
-    novelist: Mapped['Novelist'] = relationship(back_populates='books')  # noqa: F405
+
+    novelist: Mapped[Novelist] = relationship(back_populates='books')

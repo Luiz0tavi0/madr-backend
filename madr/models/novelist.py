@@ -1,4 +1,6 @@
-from typing import List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import (
     Mapped,
@@ -8,8 +10,10 @@ from sqlalchemy.orm import (
 )
 
 from madr.models import table_registry
-from madr.models.book import Book
 from madr.models.mixins import DateMixin
+
+if TYPE_CHECKING:
+    from madr.models.book import Book
 
 
 @mapped_as_dataclass(table_registry)
@@ -17,7 +21,9 @@ class Novelist(DateMixin):
     __tablename__ = 'novelists'
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     name: Mapped[str] = mapped_column(unique=True)
-    books: Mapped[List[Book]] = relationship(
-        init=False, cascade='all, delete-orphan',
+    books: Mapped[list[Book]] = relationship(
+        init=False,
+        cascade='all, delete-orphan',
         lazy='selectin',
-        back_populates='novelist')
+        back_populates='novelist',
+    )

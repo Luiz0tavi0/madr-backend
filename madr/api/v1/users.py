@@ -1,4 +1,3 @@
-from datetime import timedelta
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -6,38 +5,13 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from madr.core.database import get_session
-from madr.core.security import (
-    Token,
-    authenticate_user,
-    generate_token,
-)
-from madr.dependecies import active_user, db_session, request_form_data
+from madr.core.security import get_hash
+from madr.dependecies import active_user, db_session
 from madr.models.user import User
 from madr.schemas import Message
 from madr.schemas.user import UserCreate, UserPublic, UserUpdate
 
 router = APIRouter(prefix='/users', tags=['users'])
-
-
-@router.post('/token', status_code=HTTPStatus.OK, response_model=Token)
-def login(form_data: request_form_data, session: db_session) -> Token:
-    identity = form_data.username
-    password = form_data.password
-    user = authenticate_user(session, identity, password)
-    if not user:
-        raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Incorrect username or password',
-            headers={'WWW-Authenticate': 'Bearer'},
-        )
-    else:
-        token_delta_expire_time = timedelta(minutes=5)
-
-        data = {'sub': user.id, 'username': user.username, 'email': user.email}
-
-        access_token = generate_token(data, token_delta_expire_time)
-
-        return Token(access_token=access_token, token_type='bearer')
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
@@ -49,7 +23,8 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
         raise HTTPException(
             HTTPStatus.CONFLICT, detail='Conta já consta no MADR'
         )
-    db_user = User(**user.model_dump())
+    db_user = User(**user.model_dump(exclude_unset=True, exclude={'password'}))
+    db_user.password = get_hash(db_user.password)
     session.add(db_user)
     session.commit()
     session.refresh(db_user)

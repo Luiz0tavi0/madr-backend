@@ -2,11 +2,11 @@ from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from typing import Annotated, Optional
 
+import ipdb  # noqa: F401
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
-from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -18,11 +18,6 @@ password_hash = PasswordHash.recommended()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 settings = Settings()  # type: ignore
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
 
 
 def get_current_user(
@@ -51,6 +46,10 @@ def get_current_user(
 
 def verify_password(plain_password: str, hashed_password: str) -> tuple:
     return password_hash.verify_and_update(plain_password, hashed_password)
+
+
+def get_hash(plain_text: str) -> str:
+    return password_hash.hash(plain_text,)
 
 
 def generate_token(data: dict, exp_time_delta: Optional[timedelta] = None):
